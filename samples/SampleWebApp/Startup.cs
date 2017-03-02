@@ -16,6 +16,7 @@ namespace SampleWebApp
             Configuration = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json")
+                .AddEnvironmentVariables()
                 .Build()
                 .ReplacePlaceholders();
         }
@@ -31,11 +32,11 @@ namespace SampleWebApp
         {
             var options = serviceOptions.Value;
             Debug.Assert(options.FooService.Endpoint == options.BarService.Endpoint);
-            Debug.Assert(options.FooService.Endpoint == options.BazService.Endpoint);
 
             app.Run(async context =>
             {
                 await context.Response.WriteAsync("FooService Endpoint: " + options.FooService.Endpoint + Environment.NewLine);
+                await context.Response.WriteAsync("FooService Resource: " + options.FooService.Resource + Environment.NewLine);
                 await context.Response.WriteAsync("BarService Endpoint: " + options.BarService.Endpoint + Environment.NewLine);
                 await context.Response.WriteAsync("BazService Endpoint: " + options.BazService.Endpoint + Environment.NewLine);
             });
@@ -54,5 +55,7 @@ namespace SampleWebApp
     public class ServiceEndpoint
     {
         public string Endpoint { get; set; }
+
+        public string Resource { get; set; }
     }
 }

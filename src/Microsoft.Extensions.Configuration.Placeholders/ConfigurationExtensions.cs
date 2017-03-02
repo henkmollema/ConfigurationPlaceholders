@@ -11,7 +11,7 @@ namespace Microsoft.Extensions.Configuration
         /// <summary>
         /// A regex which matches tokens in the following format: [Item:Sub1:Sub2].
         /// </summary>
-        private static readonly Regex ConfigPlaceholderRegex = new Regex(@"\[([A-Za-z:]+?)\]");
+        private static readonly Regex ConfigPlaceholderRegex = new Regex(@"\[([A-Za-z:_]+?)\]");
 
         /// <summary>
         /// Replaces the placeholders in the specified <see cref="IConfiguration"/> instance.
@@ -28,29 +28,34 @@ namespace Microsoft.Extensions.Configuration
                     continue;
                 }
 
-                var match = ConfigPlaceholderRegex.Match(kvp.Value);
-                if (!match.Success)
+                // Replace placeholders in the configuration value.
+                var result = ConfigPlaceholderRegex.Replace(kvp.Value, match =>
                 {
-                    // Skip non-matching configuration values.
-                    continue;
-                }
+                    if (!match.Success)
+                    {
+                        // Return the original value.
+                        return kvp.Value;
+                    }
 
-                if (match.Groups.Count != 2)
-                {
-                    // There is a match, but somehow no group for the placeholder.
-                    throw InvalidPlaceholderException(match.ToString());
-                }
+                    if (match.Groups.Count != 2)
+                    {
+                        // There is a match, but somehow no group for the placeholder.
+                        throw InvalidPlaceholderException(match.ToString());
+                    }
 
-                var placeholder = match.Groups[1].Value;
-                if (placeholder.StartsWith(":") || placeholder.EndsWith(":"))
-                {
-                    // Placeholders cannot start of end with a colon.
-                    throw InvalidPlaceholderException(placeholder);
-                }
+                    var placeholder = match.Groups[1].Value;
+                    if (placeholder.StartsWith(":") || placeholder.EndsWith(":"))
+                    {
+                        // Placeholders cannot start or end with a colon.
+                        throw InvalidPlaceholderException(placeholder);
+                    }
 
-                // Replace the placeholder with the value in the configuration.
-                var configValue = configuration[placeholder];
-                configuration[kvp.Key] = configValue;
+                    // Return the value in the configuration instance.
+                    return configuration[placeholder];
+                });
+
+                // Replace the value in the configuration instance.
+                configuration[kvp.Key] = result;
             }
 
             return configuration;

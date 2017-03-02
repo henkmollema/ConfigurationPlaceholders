@@ -13,7 +13,8 @@ namespace Microsoft.Extensions.Configuration.Placeholders.Tests
                 .AddInMemoryCollection(new Dictionary<string, string>
                 {
                     ["foo:bar:baz"] = "qux",
-                    ["foo:quux"] = "[foo:bar:baz]"
+                    ["foo:quux"] = "[foo:bar:baz]",
+                    ["foo:baz"] = "[foo:bar:baz]-foo-[foo:quux]"
                 })
                 .Build();
 
@@ -23,6 +24,7 @@ namespace Microsoft.Extensions.Configuration.Placeholders.Tests
             // Assert
             Assert.Equal("qux", config["foo:bar:baz"]);
             Assert.Equal("qux", config["foo:quux"]);
+            Assert.Equal("qux-foo-qux", config["foo:baz"]);
         }
     }
 }
