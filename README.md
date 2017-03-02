@@ -5,12 +5,13 @@ Placeholder support for the ASP.NET Core Configuration framework.
 Add a reference to the `Microsoft.Extensions.Configuration.Placeholders` NuGet package.
 
 ## Usage
-Define placeholdes in your settings file:
+Define placeholdes in your settings file. You can use multiple placeholders inside static strings.
 
 ```json
 {
   "FooService": {
-    "Endpoint": "http://example.com/api/"
+    "Endpoint": "http://example.com/api/",
+    "Resource": "resources/v2/"
   },
 
   "BarService": {
@@ -18,12 +19,12 @@ Define placeholdes in your settings file:
   },
 
   "BazService": {
-    "Endpoint": "[FooService:Endpoint]"
+    "Endpoint": "http://example2.com/api/[ASPNETCORE_ENVIRONMENT]/[FooService:Resource]"
   }
 }
 ```
 
-Build your configuration object and call `ReplacePlaceholders`:
+Build your configuration object and call `ReplacePlaceholders()`:
 
 ```cs
 public Startup(IHostingEnvironment env)
@@ -31,6 +32,7 @@ public Startup(IHostingEnvironment env)
     Configuration = new ConfigurationBuilder()
         .SetBasePath(env.ContentRootPath)
         .AddJsonFile("appsettings.json")
+        .AddEnvironmentVariables()
         .Build()
         .ReplacePlaceholders();
 }
@@ -40,6 +42,9 @@ private IConfiguration Configuration { get; }
 
 Use the configuration values:
 ```cs
-var endpoint = Configuration["BarService:Endpoint"];
-// "http://example.com/api/"
+var endpoint = Configuration["BazService:Endpoint"];
+// http://example2.com/api/Development/resources/v2/
 ```
+
+## Samples
+Check out the [sample web app](https://github.com/henkmollema/ConfigurationPlaceholders/tree/master/samples/SampleWebApp) for more details.
