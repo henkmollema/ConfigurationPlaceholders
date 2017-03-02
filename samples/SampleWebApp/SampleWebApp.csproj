@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Microsoft.Extensions.Configuration.Placeholders\Microsoft.Extensions.Configuration.Placeholders.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore" Version="1.1.0" />
+  </ItemGroup>
+</Project>
