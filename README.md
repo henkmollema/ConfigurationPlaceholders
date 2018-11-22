@@ -1,9 +1,6 @@
 # Configuration Placeholders
 Placeholder support for the ASP.NET Core Configuration framework.
 
-## Installation
-Add a reference to the [`Microsoft.Extensions.Configuration.Placeholders`](https://www.nuget.org/packages/Microsoft.Extensions.Configuration.Placeholders) NuGet package.
-
 ## Usage
 Define placeholdes in your settings file. You can use multiple placeholders inside static strings.
 
